@@ -1,0 +1,18 @@
+const express = require("express")
+const { register, login, getProfile, getSuggestedUsers, editProfile, followOrUnfollow, getUserProfile, getFollowers, getFollowing, removeFollower } = require("../controllers/usercontroller")
+const authenticateToken = require("../middlewares/auth")
+const upload = require("../middlewares/multer")
+const router = express.Router()
+
+router.post('/register', register)
+router.post('/login', login)
+router.patch('/editprofile', authenticateToken, upload.single('profilePicture'), editProfile)
+router.post('/followorunfollow/:id', authenticateToken, followOrUnfollow)
+router.get('/followers/:id', authenticateToken, getFollowers)
+router.delete('/removefollower/:id', authenticateToken, removeFollower)
+router.get('/following/:id', authenticateToken, getFollowing)
+router.get('/getsuggestedusers', authenticateToken, getSuggestedUsers)
+router.get('/getprofile/:id', authenticateToken, getProfile)
+router.get('/getuserprofile', authenticateToken, getUserProfile)
+
+module.exports = router
