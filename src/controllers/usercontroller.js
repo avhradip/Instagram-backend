@@ -190,7 +190,7 @@ exports.editProfile = async (req, res) => {
 
 exports.getSuggestedUsers = async (req, res) => {
     try {
-        const SuggestedUsers = await userModel.find({ _id: { $ne: req.user.id } }).select("-password").populate({ path: "post", select: "image", options: { sort: { createdAt: -1 }, limit: 3 } })
+        const SuggestedUsers = await userModel.find({ _id: { $ne: req.user.id } }).select("-password").populate({ path: "posts", select: "image", options: { sort: { createdAt: -1 }, limit: 3 } })
 
         if (!SuggestedUsers || SuggestedUsers.length === 0) {
             return res.status(400).json({ message: "do not have any users." })
