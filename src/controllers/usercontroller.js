@@ -122,7 +122,7 @@ exports.getUserProfile = async (req, res) => {
 exports.getProfile = async (req, res) => {
     try {
         const { id } = req.params
-        const user = await userModel.findOne({ _id: id }).select('-password')
+        const user = await userModel.findOne({ _id: id }).select('-password').populate({ path: "posts", select: "image", options: { sort: { createdAt: -1 }, limit: 3 } })
 
         if (!user) {
             return res.status(400).json({ message: "User not exists!", sucess: false });
