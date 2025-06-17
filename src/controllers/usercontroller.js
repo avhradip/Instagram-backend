@@ -61,17 +61,6 @@ exports.login = async (req, res) => {
             expiresIn: '1d'
         })
 
-        // const populatedPosts = [];
-
-        // for (const postId of user.posts) {
-        //     const post = await postSchema.findById(postId);
-        //     if (post.userId.equals(user._id)) {
-        //         populatedPosts.push(post);
-        //     } else {
-        //         populatedPosts.push(null);
-        //     }
-        // }
-
         const populatedPosts = [];
 
         for (const postId of user.posts) {
@@ -201,7 +190,7 @@ exports.editProfile = async (req, res) => {
 
 exports.getSuggestedUsers = async (req, res) => {
     try {
-        const SuggestedUsers = await userModel.find({ _id: { $ne: req.user.id } }).select("-password")
+        const SuggestedUsers = await userModel.find({ _id: { $ne: req.user.id } }).select("-password").populate({ path: "post", select: "image", options: { sort: { createdAt: -1 }, limit: 3 } })
 
         if (!SuggestedUsers || SuggestedUsers.length === 0) {
             return res.status(400).json({ message: "do not have any users." })
@@ -319,7 +308,7 @@ exports.removeFollower = async (req, res) => {
             return res.status(401).json({ success: false, message: "follower id not found!" })
         } else {
             await userModel.updateOne({ _id: userId }, { $pull: { followers: followerId } })
-            await userModel.updateOne({ _id:followerId }, { $pull: { following: userId } })
+            await userModel.updateOne({ _id: followerId }, { $pull: { following: userId } })
 
             res.status(200).json({
                 message: "removed",

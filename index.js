@@ -1,14 +1,13 @@
 require('dotenv').config()
 const express = require('express')
-const path = require('path')
 const cors = require('cors')
 const connectDB = require('./src/config/DB')
-const app = express()
-const PORT = process.env.PORT || 3000
 const authRouter = require('./src/routes/userroute')
 const postRouter = require('./src/routes/postroute')
 const messageRouter = require('./src/models/messagemodel')
 
+const app = express()
+const PORT = process.env.PORT || 3000
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
