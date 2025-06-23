@@ -1,11 +1,12 @@
 const express = require("express")
-const { register, login, getProfile, getSuggestedUsers, editProfile, followOrUnfollow, getUserProfile, getFollowers, getFollowing, removeFollower } = require("../controllers/usercontroller")
+const { register, login, getProfile, getSuggestedUsers, editProfile, followOrUnfollow, getUserProfile, getFollowers, getFollowing, removeFollower, forgotPassword } = require("../controllers/usercontroller")
 const authenticateToken = require("../middlewares/auth")
 const upload = require("../middlewares/multer")
 const router = express.Router()
 
 router.post('/register', register)
 router.post('/login', login)
+router.post('/forgotPassword', forgotPassword)
 router.patch('/editprofile', authenticateToken, upload.single('profilePicture'), editProfile)
 router.post('/followorunfollow/:id', authenticateToken, followOrUnfollow)
 router.get('/followers/:id', authenticateToken, getFollowers)

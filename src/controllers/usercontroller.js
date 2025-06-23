@@ -90,7 +90,7 @@ exports.login = async (req, res) => {
             token: token
         })
     } catch (error) {
-        console.error("Login error stack:", error.stack); // Add this
+        console.error("Login error stack:", error.stack);
         return res.status(500).json({
             message: "Server error",
             success: false,
@@ -98,6 +98,48 @@ exports.login = async (req, res) => {
         });
     }
 
+}
+
+exports.forgotPassword = async (req,res) => {
+    try {
+        const { email } = req.body
+        
+        if (!email) return res.status(500).json({ message: "email not found" })
+        
+        const user = userModel.findOne({ email: email })
+        
+        if (!user) return res.status(500).json({ message: "wrong email" })
+        
+        const token = jwt.sign({ id: user?._id }, process.env.JWT_SECRET, { expiresIn: "15m" })
+        
+        const resetUrl = `https://idyllic-torte-b75560.netlify.app/reset-password/${token}`
+
+        var transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'abirghosh102@gmail.com',
+                pass: 'qbii tjjm ktdr paxm'
+            }
+        });
+
+        var mailOptions = {
+            from: 'abirghosh102@gmail.com',
+            to: email,
+            subject: 'Password reset',
+            text: resetUrl
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+        
+    } catch (error) {
+        
+    }
 }
 
 exports.getUserProfile = async (req, res) => {
