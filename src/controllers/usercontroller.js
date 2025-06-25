@@ -138,7 +138,7 @@ exports.forgotPassword = async (req,res) => {
         });
         
     } catch (error) {
-        return res.status(500).json({ message: "surver error", error: error })
+        return res.status(500).json({ message: "surver error", error: error.message })
     }
 }
 
