@@ -138,9 +138,33 @@ exports.forgotPassword = async (req,res) => {
         });
         
     } catch (error) {
-        
+        return res.status(500).json({ message: "surver error", error: error })
     }
 }
+
+exports.resetPassword = async (req, res) => {
+    try {
+        const userId = req.user.id
+        const { newPassword, conformPassword } = req.body;
+
+        if (!newPassword || !conformPassword) {
+            return res.status(400).json({ message: "newPassword and conformPassword not found..!" })
+        }
+
+        if (newPassword !== conformPassword) {
+            return res.status(400).json({ message: "Passwords do not match" });
+        }
+
+        const hashPassword = await bcrypt.hash(newPassword, 10)
+
+        await userModel.findByIdAndUpdate(userId, { password: hashPassword })
+
+        res.status(200).json({ message: "Password reset successful" });
+    } catch (error) {
+        console.error("Reset Password Error:", error);
+        res.status(500).json({ message: "Invalid or expired token" });
+    }
+};
 
 exports.getUserProfile = async (req, res) => {
     try {
