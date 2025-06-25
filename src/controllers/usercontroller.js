@@ -6,6 +6,7 @@ const cloudinary = require('../config/cloudinary');
 const { Promise } = require('mongoose');
 const postSchema = require('../models/postmodel');
 const { post } = require('../routes/postroute');
+const nodemailer = require("nodemailer");
 const JWT_SECRET = process.env.JWT_SECRET
 
 exports.register = async (req, res) => {
