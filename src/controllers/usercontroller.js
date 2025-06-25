@@ -107,7 +107,7 @@ exports.forgotPassword = async (req,res) => {
         
         if (!email) return res.status(500).json({ message: "email not found" })
         
-        const user = userModel.findOne({ email: email })
+        const user = userModel.findOne({ email })
         
         if (!user) return res.status(500).json({ message: "wrong email" })
         
@@ -137,7 +137,7 @@ exports.forgotPassword = async (req,res) => {
                 console.log('Email sent: ' + info.response);
             }
         });
-        
+        res.status(200).json({ message: "Reset link sent to your email", success: true });
     } catch (error) {
         return res.status(500).json({ message: "surver error", error: error.message })
     }
