@@ -40,38 +40,34 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body
+        const { email, password } = req.body;
 
         if (!email || !password) {
-            return res.status(400).json({ message: "Somthing is missing plese check.", sucess: false })
+            return res.status(400).json({ message: "Email or password is missing.", success: false });
         }
 
-        const user = await userModel.findOne({ email: email })
+        const user = await userModel.findOne({ email });
 
         if (!user) {
-            return res.status(400).json({ message: "User not exists!", sucess: false });
+            return res.status(400).json({ message: "User does not exist.", success: false });
         }
 
-        const isMatch = await bcrypt.compare(password, user.password)
+        const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-            return res.status(400).json({ message: "wrong password or email plese check.", sucess: false })
+            return res.status(400).json({ message: "Incorrect email or password.", success: false });
         }
 
-        const token = await jwt.sign({ id: user._id }, JWT_SECRET, {
-            expiresIn: '1d'
-        })
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
         const populatedPosts = [];
 
         for (const postId of user.posts) {
-            const post = await postSchema.findById({ _id: postId });
-            if (post && post.userId.equals(user._id)) {
+            const post = await postSchema.findById(postId);
+            if (post && post.userId && post.userId.equals(user._id)) {
                 populatedPosts.push(post);
             }
         }
-
-
 
         const User = {
             _id: user._id,
@@ -81,15 +77,16 @@ exports.login = async (req, res) => {
             bio: user.bio,
             followers: user.followers,
             following: user.following,
-            post: populatedPosts
-        }
+            posts: populatedPosts
+        };
 
         return res.status(200).json({
             user: User,
-            message: "Login sucessfull.",
-            sucess: true,
-            token: token
-        })
+            message: "Login successful.",
+            success: true,
+            token
+        });
+
     } catch (error) {
         console.error("Login error stack:", error.stack);
         return res.status(500).json({
@@ -98,8 +95,8 @@ exports.login = async (req, res) => {
             error: error.message
         });
     }
+};
 
-}
 
 exports.forgotPassword = async (req,res) => {
     try {
